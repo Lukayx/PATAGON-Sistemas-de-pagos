@@ -56,3 +56,21 @@ Este proyecto implementa un sistema de pagos, que incluye la autenticación de u
 
 ## Licencia
 Este proyecto está licenciado bajo la licencia MIT.
+
+## Requisitos funcionales
+- Autenticación de usuarios.
+- Manejo de solicitudes
+- Gestor de usuarios
+- Controlador de estadísticas y logs
+- Visualizador de bolsas
+- Gestor de pagos
+- Gestor de bolsas de uso
+- Gestor de notificaciones
+- Historial de uso y compras
+- Gestor de roles
+## Requisitos no funcionales
+- Responsividad
+- Rapidez
+- Alta capacidad de usuarios
+- Seguridad
+- Usabilidad
