@@ -9,6 +9,23 @@ import Notification_dashboard from '@components/notificaciones/notificaciones_da
 import logo from '../../assets/SoloLogo_Patagon.png';
 import { jwtDecode } from 'jwt-decode';
 
+/**
+ * Componente Dashboard_user
+ * 
+ * Página de administración para la gestión de usuarios en el sistema de pagos.
+ * Permite visualizar usuarios activos y eliminados, buscar usuarios, y realizar acciones
+ * como eliminar usuarios (solo disponible para el rol "Administrador").
+ * 
+ * Características principales:
+ * - Visualización de usuarios activos y eliminados en tablas diferenciadas.
+ * - Búsqueda de usuarios por nombre o email.
+ * - Modal para mostrar detalles o confirmar acciones sobre usuarios seleccionados.
+ * - Control de acceso a acciones según el rol del usuario autenticado.
+ * - Manejo de estados de carga y errores del servidor.
+ * 
+ * @component
+ * @returns {JSX.Element} Página de administración de usuarios.
+ */
 const Dashboard_user = () => {
   const token = localStorage.getItem('token');
   const decodedToken = jwtDecode(token);

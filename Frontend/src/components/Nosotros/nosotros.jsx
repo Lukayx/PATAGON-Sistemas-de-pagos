@@ -3,6 +3,17 @@ import styles from "./nosotros.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShieldAlt, faLock, faCheckCircle, faBolt, faClock } from "@fortawesome/free-solid-svg-icons";
 
+/**
+ * Componente funcional que representa la sección "Nosotros" de la aplicación.
+ * 
+ * Muestra información sobre la misión, visión, valores y equipo de la empresa,
+ * así como las razones para preferir sus servicios en computación de alto rendimiento (HPC).
+ * Incluye secciones para destacar la seguridad, confidencialidad, confiabilidad, eficiencia
+ * y tiempo de respuesta, además de presentar a los miembros principales del equipo.
+ * 
+ * @component
+ * @returns {JSX.Element} Sección informativa sobre la empresa y su equipo.
+ */
 const Nosotros = () => {
   return (
       <section className={styles.section2}>

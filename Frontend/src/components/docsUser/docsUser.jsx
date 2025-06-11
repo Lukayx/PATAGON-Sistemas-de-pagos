@@ -4,6 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGraduate, faBriefcase, faBook } from '@fortawesome/free-solid-svg-icons';
 
 
+/**
+ * Componente DocsUser
+ *
+ * Renderiza la sección de documentación para usuarios del supercomputador Patagon.
+ * Incluye tarjetas informativas para guiar a los usuarios sobre el uso general,
+ * información para externos y recursos para estudiantes.
+ *
+ * @component
+ * @returns {JSX.Element} Elemento principal que contiene la documentación para los usuarios.
+ */
 const DocsUser = () => {
   return (
     <main className={styles.container}>

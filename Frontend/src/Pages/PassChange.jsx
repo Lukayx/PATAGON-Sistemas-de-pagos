@@ -7,6 +7,22 @@ import ParticlesBG from '@components/Particles/ParticlesBG';
 import InputPassword from '@components/InputPassword/inputPassword';
 import useNewPassword from '@hooks/changePassword.js'; 
 
+/**
+ * Componente de React para la página de cambio de contraseña.
+ *
+ * Esta página permite al usuario establecer una nueva contraseña utilizando un token recibido por URL.
+ * Incluye validaciones de seguridad para la contraseña, como longitud mínima, inclusión de mayúsculas y números,
+ * y verificación de coincidencia entre la contraseña y su confirmación.
+ * 
+ * Funcionalidades principales:
+ * - Obtiene el token de la URL para autorizar el cambio de contraseña.
+ * - Valida los campos de contraseña y confirmación antes de enviar.
+ * - Muestra mensajes de error y éxito según la respuesta del backend y las validaciones locales.
+ * - Deshabilita los campos y el botón de envío mientras se procesa la solicitud.
+ *
+ * @component
+ * @returns {JSX.Element} Página de cambio de contraseña.
+ */
 const PassChange = () => {
   const initialData = {
     password: '',

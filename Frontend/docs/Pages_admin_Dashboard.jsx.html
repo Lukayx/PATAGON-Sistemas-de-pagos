@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/admin/Dashboard.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/admin/Dashboard.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from 'react';
+import MenuDashboard from '@components/menuDashboard/menuDashboard.jsx';
+import styles from '@adminStyles/Dashboard.module.css';
+import styles1 from '@styles/DashboardGeneral.module.css';
+import Notification_dashboard from '@components/notificaciones/notificaciones_dashboard.jsx';
+import logo from '../../assets/SoloLogo_Patagon.png';
+import LinearGraphic from "@components/Graphics/LinearGraphic.jsx";
+import CircularGraphic from "@components/Graphics/CircularGraphic.jsx";
+import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
+import { FaDollarSign, FaUsers, FaChartLine } from 'react-icons/fa';
+import useDashboardStats from '@hooks/useDashboardStats.js';
+
+const InfoCard = ({ title, value, change, icon, onClick }) => (
+  &lt;div className={styles.infoCard} onClick={onClick} style={{ cursor: 'pointer' }}>
+    &lt;div className={styles.iconContainer}>{icon}&lt;/div>
+    &lt;div className={styles.textContainer}>
+      &lt;h2>{title}&lt;/h2>
+      &lt;p>{value}&lt;/p>
+      {change &amp;&amp; &lt;span>{change}&lt;/span>}
+    &lt;/div>
+  &lt;/div>
+);
+
+/**
+ * Componente principal del panel de administración (Dashboard).
+ *
+ * Este componente muestra un resumen de estadísticas clave para los administradores,
+ * incluyendo ingresos totales, usuarios registrados, solicitudes recibidas y gráficos
+ * de actividad reciente. Además, presenta una tabla con la lista de solicitudes recientes.
+ *
+ * Funcionalidades principales:
+ * - Visualización de estadísticas generales y gráficas de los últimos 7 días.
+ * - Acceso rápido a secciones específicas mediante tarjetas informativas.
+ * - Visualización de notificaciones solo para usuarios con rol de "Administrador".
+ * - Navegación a diferentes vistas del panel de administración.
+ * - Presentación de una tabla con información relevante de solicitudes.
+ *
+ * @component
+ * @returns {JSX.Element} El componente Dashboard renderizado.
+ */
+const Dashboard = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const token = localStorage.getItem('token');
+  const decodedToken = jwtDecode(token);
+  const userRole = decodedToken.rol;
+  const { data, loading, error } = useDashboardStats();
+  const navigate = useNavigate();
+
+  const labels = data?.sevenDaysStats ? data.sevenDaysStats.map(item => item.date) : [];
+  const dataPoints = data?.sevenDaysStats ? data.sevenDaysStats.map(item => item.count) : [];
+
+  return (
+    &lt;div className={styles1.dashboardContainer}>
+      &lt;MenuDashboard toggleMenu={() => { setIsOpen(!isOpen) }} isOpen={isOpen} />
+      &lt;main className={`${styles1.content} ${isOpen ? styles1.open : ''}`}>
+        &lt;div className={styles1.header}>
+          &lt;div className={styles1.titleLogo}>
+            &lt;img src={logo} className={styles1.menuIcon} alt="Logo" />
+            &lt;h1>Dashboard&lt;/h1>
+          &lt;/div>
+          {userRole === 'Administrador' &amp;&amp; &lt;Notification_dashboard />}
+        &lt;/div>
+
+        &lt;div className={styles.cardContainer}>
+          &lt;InfoCard 
+            title="Total ingresos" 
+            value={`$${data?.totalGanancias ?? 0} USD`} 
+            change={`+${data?.totalMoneyPayed ?? 0}`} 
+            icon={&lt;FaDollarSign />} 
+            onClick={() => navigate('/admin/dashboard-profit')}
+          />
+          &lt;InfoCard 
+            title="Usuarios registrados" 
+            value={data?.totalUsers ?? 0} 
+            icon={&lt;FaUsers />} 
+            onClick={() => navigate('/admin/dashboard-users')}
+          />
+          &lt;InfoCard 
+            title="Solicitudes recibidas" 
+            value={`${data?.totalRequests ?? 0}`} 
+            icon={&lt;FaChartLine />} 
+            onClick={() => navigate('/admin/dashboard-requests')}
+          />
+        &lt;/div>
+
+        &lt;div className={styles.graphContainer}>
+          &lt;div className={styles.graph1}>
+            &lt;LinearGraphic
+              labels={labels}
+              dataPoints={dataPoints}
+              title="Ingresos últimos 7 días"
+              color="#0b6730"
+            />
+          &lt;/div>
+          &lt;div className={styles.graph2}>
+            &lt;CircularGraphic
+              labels={['Pagado', 'UACh']}
+              dataPoints= {[data?.usersTypePagado ?? 0, data?.usersTypeUach ?? 0]}
+              title="Distribución de usuarios"
+              colors={['#FF6384', '#36A2EB']}
+            />
+          &lt;/div>
+        &lt;/div>
+
+        &lt;div className={styles.infoTableContainer}>
+          &lt;h3 className={styles.infoTableTitle}>Lista de solicitudes&lt;/h3>
+          &lt;table className={styles.infoTable}>
+            &lt;thead className={styles.infoTableThead}>
+              &lt;tr className={styles.infoTableTr}>
+                &lt;th className={styles.infoTableTh}>#&lt;/th>
+                &lt;th className={styles.infoTableTh}>Email&lt;/th>
+                &lt;th className={styles.infoTableTh}>Estado&lt;/th>
+                &lt;th className={styles.infoTableTh}>Fecha&lt;/th>
+                &lt;th className={styles.infoTableTh}>Institución&lt;/th>
+                &lt;th className={styles.infoTableTh}>Nombre&lt;/th>
+              &lt;/tr>
+            &lt;/thead>
+            &lt;tbody className={styles.infoTableTbody}>
+              &lt;tr>
+                &lt;td>10&lt;/td>
+                &lt;td>fernacastillo.perez0607@gmail.com&lt;/td>
+                &lt;td>Aceptado&lt;/td>
+                &lt;td>2024-09-19&lt;/td>
+                &lt;td>UACh&lt;/td>
+                &lt;td>Fernando Castillo Perez&lt;/td>
+              &lt;/tr>
+            &lt;/tbody>
+          &lt;/table>
+        &lt;/div>
+      &lt;/main>
+    &lt;/div>
+  );
+};
+
+export default Dashboard;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AcceptRequestModal">AcceptRequestModal</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarGraphic">BarGraphic</a></li><li><a href="global.html#Boleta">Boleta</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CartolaPDF">CartolaPDF</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Dashboard_prices">Dashboard_prices</a></li><li><a href="global.html#Dashboard_profit">Dashboard_profit</a></li><li><a href="global.html#Dashboard_user">Dashboard_user</a></li><li><a href="global.html#DocsUser">DocsUser</a></li><li><a href="global.html#DuplicateUserModal">DuplicateUserModal</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#InputPassword">InputPassword</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#ItemUser">ItemUser</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginButton">LoginButton</a></li><li><a href="global.html#MenuDashboard">MenuDashboard</a></li><li><a href="global.html#ModalUser">ModalUser</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Nosotros">Nosotros</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#ParticlesComponent">ParticlesComponent</a></li><li><a href="global.html#PassChange">PassChange</a></li><li><a href="global.html#Recovery">Recovery</a></li><li><a href="global.html#Registro">Registro</a></li><li><a href="global.html#RejectRequestModal">RejectRequestModal</a></li><li><a href="global.html#RetornoPage">RetornoPage</a></li><li><a href="global.html#Solicitudes">Solicitudes</a></li><li><a href="global.html#SolicitudesList">SolicitudesList</a></li><li><a href="global.html#TableComponent">TableComponent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 21:08:16 GMT-0400 (Chile Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

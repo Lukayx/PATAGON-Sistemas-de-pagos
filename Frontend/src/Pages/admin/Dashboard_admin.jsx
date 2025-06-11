@@ -10,6 +10,23 @@ import TableComponent from '@components/Table/Table';
 import logo from '../../assets/SoloLogo_Patagon.png';
 import { toast} from 'sonner';
 
+/**
+ * Componente Dashboard para la administración de usuarios con rol de administrador.
+ *
+ * Este componente permite visualizar, crear y eliminar administradores dentro del sistema.
+ * Incluye funcionalidades como:
+ * - Listado de administradores existentes.
+ * - Creación de nuevos administradores mediante un formulario modal.
+ * - Generación automática de contraseñas seguras.
+ * - Eliminación de administradores con confirmación.
+ * - Visualización de los permisos asociados a cada rol (Admin, Co-admin, Revisor).
+ *
+ * Utiliza hooks de React para el manejo de estado y efectos secundarios, y realiza peticiones
+ * a la API para la gestión de usuarios administradores.
+ *
+ * @component
+ * @returns {JSX.Element} Interfaz de administración de usuarios con roles administrativos.
+ */
 const Dashboard = () => {
   const initialData = {
     nombre: "",

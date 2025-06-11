@@ -6,6 +6,36 @@ import useExportToExcel from '@hooks/exportExcelRequests';
 import logo from '../../assets/SoloLogo_Patagon.png';
 import Table from "@components/Table/Table";  // Asegúrate de importar tu componente de tabla
 
+/**
+ * Componente Dashboard_prices
+ * 
+ * Página de administración para gestionar la lista de productos (bolsas) y sus precios.
+ * Permite visualizar, eliminar productos y exportar la lista a Excel.
+ * 
+ * Características principales:
+ * - Muestra una tabla con los productos y sus precios.
+ * - Permite eliminar productos de la lista.
+ * - Incluye un botón para agregar nuevos productos (funcionalidad pendiente).
+ * - Permite exportar la lista de productos a un archivo Excel.
+ * 
+ * Estados:
+ * - isOpen: controla la visibilidad del menú lateral.
+ * - productList: almacena la lista de productos a mostrar.
+ * 
+ * Hooks utilizados:
+ * - useState: para manejar los estados locales.
+ * - useEffect: para cargar los productos de prueba al montar el componente.
+ * 
+ * Props:
+ * - No recibe props directamente.
+ * 
+ * Dependencias externas:
+ * - useExportToExcel: hook personalizado para exportar datos a Excel.
+ * - Table: componente para renderizar la tabla de productos.
+ * - MenuDashboard: componente para el menú lateral.
+ * 
+ * @component
+ */
 const Dashboard_prices = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [productList, setProductList] = useState([]); // Estado para almacenar los productos

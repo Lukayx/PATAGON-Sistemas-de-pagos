@@ -37,6 +37,17 @@ import PurchaseDetails from '@clientPage/PurchaseDetails';
 
 
 
+/**
+ * Componente principal de la aplicación que define las rutas utilizando React Router.
+ *
+ * @component
+ * @returns {JSX.Element} El árbol de rutas de la aplicación.
+ *
+ * @description
+ * Este componente configura todas las rutas principales de la aplicación, incluyendo rutas públicas y protegidas.
+ * Utiliza el componente `ProtectedRoute` para restringir el acceso a ciertas rutas según los roles de usuario.
+ * También incluye rutas para autenticación, paneles de administración, información, historial de compras, y manejo de errores 404.
+ */
 function App() {
   return (
     <Router>

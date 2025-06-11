@@ -1,10 +1,19 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import styles from "./itemUser.module.css";
 import { format } from 'date-fns';
-import { calcularDiasDesdeIngreso } from "/Utils/dateUtils";
 
+/**
+ * Componente que representa un ítem de usuario en una lista.
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {Object} props.user - Objeto que contiene la información del usuario.
+ * @param {string|number} props.delay - Retraso para la animación de aparición del ítem.
+ * @param {Function} props.setShowModal - Función para mostrar el modal de confirmación o información.
+ * @param {Function} props.selectUser - Función para seleccionar el usuario actual.
+ *
+ * @returns {JSX.Element} Elemento visual que muestra la información del usuario, permitiendo acciones como eliminar o ver motivo.
+ */
 const ItemUser = ({ user, delay, setShowModal, selectUser}) => {
   const [open, setOpen] = React.useState(false);
   let dead = false;

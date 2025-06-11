@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/admin/Dashboard_profit.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/admin/Dashboard_profit.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect, useRef } from "react";
+import MenuDashboard from "@components/menuDashboard/menuDashboard";
+import styles from "@adminStyles/DashboardProfit.module.css";
+import styles1 from "@styles/DashboardGeneral.module.css";
+import LinearGraphic from "@components/Graphics/LinearGraphic";
+import BarGraphic from "@components/Graphics/BarGraphic";
+import useExportToExcel from '@hooks/exportExcelRequests';
+import useDashboardStats from "@hooks/useDashboardStatsProfit";
+import logo from '../../assets/SoloLogo_Patagon.png';
+import * as XLSX from 'xlsx';
+
+
+/**
+ * Componente Dashboard_profit
+ * 
+ * Página de administración que muestra estadísticas y gráficos relacionados con las ganancias,
+ * ingresos y productos vendidos en la plataforma. Permite exportar los datos de transacciones
+ * a Excel y visualizar información relevante sobre métodos de pago y ventas recientes.
+ * 
+ * Características principales:
+ * - Visualización de ganancias totales en dólares.
+ * - Exportación de detalles de transacciones a un archivo Excel.
+ * - Muestra de ingresos diarios, mensuales y anuales (actualmente en $0).
+ * - Listado de los productos más vendidos.
+ * - Gráficos de barras y líneas para métodos de pago e ingresos en los últimos 3 meses y 7 días.
+ * - Expansión de gráficos para una mejor visualización.
+ * 
+ * Hooks utilizados:
+ * - useState: Manejo de estados locales para expansión de gráficos y datos de ingresos.
+ * - useRef: Referencias a los contenedores de los gráficos para detectar clics fuera.
+ * - useEffect: Obtención de datos de ingresos de los últimos 3 meses y manejo de eventos de clic.
+ * 
+ * @component
+ * @returns {JSX.Element} Página de dashboard de ganancias para el administrador.
+ */
+const Dashboard_profit = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [expandedDiv, setExpandedDiv] = useState(null);
+  const divRefs = useRef([]);
+  const [labels2, setLabels2] = useState([]);
+  const [dataPoints2, setDataPoints2] = useState([]);
+  const { exportToExcel, loading } = useExportToExcel();
+  const { data } = useDashboardStats();
+  const ip_server = import.meta.env.VITE_IP;
+  const port = import.meta.env.VITE_PORT;
+  const IP = import.meta.env.VITE_SERVERIP;
+  
+
+  const labels = data?.weeklyStats ? data.weeklyStats.map(item => item.date) : [];
+  const dataPoints = data?.weeklyStats ? data.weeklyStats.map(item => item.count) : [];
+  
+
+  useEffect(() => {
+    const fetchData3Months = async () => {
+      try {
+        const response = await fetch(`${IP}/get-users-stats-3months`);
+        const result = await response.json();
+
+        const newLabels2 = result.map(item => item.month); 
+        const newDataPoints2 = result.map(item => item.count);
+
+        setLabels2(newLabels2);
+        setDataPoints2(newDataPoints2);
+      } catch (error) {
+        console.error('Error fetching 3-month data:', error);
+      }
+    };
+
+    fetchData3Months();
+  }, []);
+
+ 
+
+  const handleExpand = (div) => {
+    setExpandedDiv(expandedDiv === div ? null : div);
+  };
+
+  const handleExport = () => {
+    exportToExcel(
+      `${IP}/get-ingresos`,
+      'Transacciones_Historico'
+    );
+  };
+
+  const handleClickOutside = (event) => {
+    if (expandedDiv &amp;&amp; divRefs.current) {
+      const isOutsideClick = divRefs.current.every(
+        (ref) => ref &amp;&amp; !ref.contains(event.target)
+      );
+      if (isOutsideClick) {
+        setExpandedDiv(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [expandedDiv]);
+
+  return (
+    &lt;div className={styles1.dashboardContainer} id={styles.black}>
+      &lt;MenuDashboard toggleMenu={() => setIsOpen(!isOpen)} isOpen={isOpen} />
+      &lt;main className={`${styles1.content} ${isOpen ? styles1.open : ""}`} id={styles.main}>
+        &lt;div className={styles1.header}>
+          &lt;div className={styles1.titleLogo}>
+            &lt;img src={logo} className={styles1.menuIcon}/>
+            &lt;h1>Dashboard Profit&lt;/h1>
+          &lt;/div>
+        &lt;/div>
+        
+        &lt;div className={styles.CardContainer}>
+          &lt;div className={styles.CardGanancias}>
+            &lt;div className={styles.CardGananciasTitle}>
+              &lt;h2>Ganancias totales&lt;/h2>
+              &lt;p>Total de ganancias realizadas en dolares&lt;/p>
+            &lt;/div>
+            &lt;div className={styles.CardGananciasValue}>
+              &lt;p>${data?.totalGanancias ?? 0}&lt;/p>
+            &lt;/div>
+            &lt;div className={styles.exportExcel}>
+              &lt;button className={styles.excel} onClick={handleExport}>
+                &lt;img src="/icons/excel-icon.svg" alt="Exportar" />
+                &lt;span>Exportar detalles&lt;/span>
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+          &lt;div className={styles.CardIngresos}>
+            &lt;div className={styles.CardIngresosTitle}>
+              &lt;h2>Ingresos&lt;/h2>
+              &lt;p>Diarios, mensuales y anuales&lt;/p>
+            &lt;/div>
+            &lt;div className={styles.CardIngresosValues}>
+              &lt;div>
+                &lt;p>Diario&lt;/p>
+                &lt;span>$0&lt;/span>
+              &lt;/div>
+              &lt;div>
+                &lt;p>Mensual&lt;/p>
+                &lt;span>$0&lt;/span>
+              &lt;/div>
+              &lt;div>
+                &lt;p>Anual&lt;/p>
+                &lt;span>$0&lt;/span>
+              &lt;/div>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+
+        &lt;div className={styles.containerMethodPayment}>
+          &lt;div className={styles.topProducts}>
+            &lt;h2>Top productos vendidos&lt;/h2>
+            &lt;div className={styles.topProductsContainer}>
+              {data?.products?.length > 0 ? (
+                data.products.map((product, index) => (
+                  &lt;div className={styles.topProduct} key={index}>
+                    &lt;p>Bolsa: {product.id_product}&lt;/p>
+                    &lt;p>Total Vendido: {parseInt(product.total_sold, 10)}&lt;/p>
+                  &lt;/div>
+                ))
+              ) : (
+                &lt;p>No hay productos disponibles&lt;/p>
+              )}
+            &lt;/div>
+          &lt;/div>
+          &lt;div className={styles.graphicMethodPayment}>
+            &lt;BarGraphic
+              labels={['PayPal', 'MercadoPago']}
+              dataPoints={[data?.paypal ?? 0, data?.mercadopago ?? 0]}
+              title="Métodos de pago utilizados"
+              color="#0b6730"
+            />
+          &lt;/div>
+        &lt;/div>
+
+        &lt;div className={styles.contenedor}>
+          &lt;div 
+            className={`${styles.div1} ${expandedDiv === 'div1' ? styles.expanded : ''}`}
+            onClick={() => handleExpand('div1')}
+            ref={(el) => (divRefs.current[0] = el)}
+          >
+            &lt;LinearGraphic
+              labels={labels2}
+              dataPoints={dataPoints2}
+              title="Ingresos últimos 3 meses"
+              color="#0b6730"
+            />
+          &lt;/div>
+          &lt;div 
+            className={`${styles.div2} ${expandedDiv === 'div2' ? styles.expanded : ''}`}
+            onClick={() => handleExpand('div2')}
+            ref={(el) => (divRefs.current[1] = el)}
+          >
+            &lt;LinearGraphic
+              labels={labels}
+              dataPoints={dataPoints}
+              title="Ingresos últimos 7 días"
+              color="#0b6730"
+            />
+          &lt;/div>
+          &lt;div 
+            className={`${styles.div3} ${expandedDiv === 'div3' ? styles.expanded : ''}`}
+            onClick={() => handleExpand('div3')}
+            ref={(el) => (divRefs.current[2] = el)}
+          >
+            &lt;BarGraphic
+              labels={['MercadoPago', 'PayPal']}
+              dataPoints={[20, 30]}
+              title="Método de pago utilizados"
+              color="#0b6730" 
+            />
+          &lt;/div>
+        &lt;/div>
+      &lt;/main>
+    &lt;/div>
+  );
+};
+
+export default Dashboard_profit;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AcceptRequestModal">AcceptRequestModal</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarGraphic">BarGraphic</a></li><li><a href="global.html#Boleta">Boleta</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CartolaPDF">CartolaPDF</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Dashboard_prices">Dashboard_prices</a></li><li><a href="global.html#Dashboard_profit">Dashboard_profit</a></li><li><a href="global.html#Dashboard_user">Dashboard_user</a></li><li><a href="global.html#DocsUser">DocsUser</a></li><li><a href="global.html#DuplicateUserModal">DuplicateUserModal</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#InputPassword">InputPassword</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#ItemUser">ItemUser</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginButton">LoginButton</a></li><li><a href="global.html#MenuDashboard">MenuDashboard</a></li><li><a href="global.html#ModalUser">ModalUser</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Nosotros">Nosotros</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#ParticlesComponent">ParticlesComponent</a></li><li><a href="global.html#PassChange">PassChange</a></li><li><a href="global.html#Recovery">Recovery</a></li><li><a href="global.html#Registro">Registro</a></li><li><a href="global.html#RejectRequestModal">RejectRequestModal</a></li><li><a href="global.html#RetornoPage">RetornoPage</a></li><li><a href="global.html#Solicitudes">Solicitudes</a></li><li><a href="global.html#SolicitudesList">SolicitudesList</a></li><li><a href="global.html#TableComponent">TableComponent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 21:08:16 GMT-0400 (Chile Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

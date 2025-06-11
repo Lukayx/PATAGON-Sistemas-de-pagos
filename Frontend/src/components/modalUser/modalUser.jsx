@@ -1,7 +1,18 @@
-import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 import styles from "./modalUser.module.css";
 
+/**
+ * ModalUser es un componente modal que permite al usuario ingresar un motivo para eliminar un usuario,
+ * o mostrar el motivo de eliminación ya ingresado.
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {function} props.closeModal - Función para cerrar el modal. Recibe como argumento el motivo ingresado o `false` si se cancela.
+ * @param {string|false} props.motivo - Motivo de eliminación a mostrar. Si es `false` o vacío, se muestra el formulario para ingresar el motivo.
+ *
+ * @example
+ * <ModalUser closeModal={handleClose} motivo={motivo} />
+ */
 const ModalUser = ({ closeModal, motivo }) => {
   const [motive, setMotive] = useState("");
 

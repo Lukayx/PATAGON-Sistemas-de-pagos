@@ -6,6 +6,19 @@ import { faTachometerAlt, faClipboard, faUsers, faDollarSign, faSackDollar , faS
 import { jwtDecode } from 'jwt-decode';
 
 
+/**
+ * Componente MenuDashboard
+ *
+ * Renderiza el menú lateral de navegación del dashboard, mostrando diferentes opciones según el rol del usuario autenticado.
+ * El menú permite navegar entre distintas secciones del sistema y cerrar sesión.
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {Function} props.toggleMenu - Función para alternar la visibilidad del menú lateral.
+ * @param {boolean} props.isOpen - Indica si el menú lateral está abierto o cerrado.
+ *
+ * @returns {JSX.Element} Elemento JSX que representa el menú de navegación del dashboard.
+ */
 const MenuDashboard = ({ toggleMenu, isOpen }) => {
   const location = useLocation(); // Obtén la URL actual  
   const token = localStorage.getItem('token'); // Obtiene el token del localStorage

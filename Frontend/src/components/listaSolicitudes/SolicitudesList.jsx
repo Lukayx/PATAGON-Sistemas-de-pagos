@@ -1,6 +1,19 @@
 import React from 'react';
 import styles from './DashboardSolicitudes.module.css';
 
+/**
+ * Componente que muestra una lista paginada de solicitudes.
+ *
+ * @component
+ * @param {Object[]} solicitudes - Arreglo de objetos de solicitudes a mostrar.
+ * @param {function} mostrarPDF - Función para mostrar el PDF de una solicitud. Recibe la URL del PDF y el índice de la solicitud.
+ * @param {number} currentPage - Número de la página actual.
+ * @param {number} totalPages - Número total de páginas disponibles.
+ * @param {function} goToPreviousSolicitudesPage - Función para ir a la página anterior de solicitudes.
+ * @param {function} goToNextSolicitudesPage - Función para ir a la página siguiente de solicitudes.
+ *
+ * @returns {JSX.Element} Un componente que renderiza la lista de solicitudes con paginación y botones para ver los PDFs asociados.
+ */
 const SolicitudesList = ({ solicitudes, mostrarPDF, currentPage, totalPages, goToPreviousSolicitudesPage, goToNextSolicitudesPage }) => {
   const solicitudesPerPage = 5;
   const indexOfLastSolicitud = currentPage * solicitudesPerPage;

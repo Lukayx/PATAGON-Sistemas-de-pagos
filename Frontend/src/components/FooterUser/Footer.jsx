@@ -1,6 +1,16 @@
 import React from 'react';
 import styles from './Footer.module.css'; // Importación del CSS como módulo
 
+/**
+ * Componente Footer
+ *
+ * Renderiza el pie de página del sitio web, incluyendo el logo de la Universidad Austral de Chile,
+ * enlaces de navegación (Sobre nosotros, Contacto, Política de privacidad, Términos y condiciones)
+ * y un mensaje de derechos reservados.
+ *
+ * @component
+ * @returns {JSX.Element} Elemento JSX que representa el pie de página del usuario.
+ */
 const Footer = () => {
   return (
     <footer className={styles.footer}>

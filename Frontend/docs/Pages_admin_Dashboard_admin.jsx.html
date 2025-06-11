@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/admin/Dashboard_admin.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/admin/Dashboard_admin.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import MenuDashboard from '@components/menuDashboard/menuDashboard';
+import styles from '@adminStyles/DashboardAdmin.module.css';
+import styles1 from '@styles/DashboardGeneral.module.css'; 
+import Notification_dashboard from '@components/notificaciones/notificaciones_dashboard.jsx';
+import RefreshAccessToken from '@components/RefreshToken.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserPlus, faTimes, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import TableComponent from '@components/Table/Table';
+import logo from '../../assets/SoloLogo_Patagon.png';
+import { toast} from 'sonner';
+
+/**
+ * Componente Dashboard para la administración de usuarios con rol de administrador.
+ *
+ * Este componente permite visualizar, crear y eliminar administradores dentro del sistema.
+ * Incluye funcionalidades como:
+ * - Listado de administradores existentes.
+ * - Creación de nuevos administradores mediante un formulario modal.
+ * - Generación automática de contraseñas seguras.
+ * - Eliminación de administradores con confirmación.
+ * - Visualización de los permisos asociados a cada rol (Admin, Co-admin, Revisor).
+ *
+ * Utiliza hooks de React para el manejo de estado y efectos secundarios, y realiza peticiones
+ * a la API para la gestión de usuarios administradores.
+ *
+ * @component
+ * @returns {JSX.Element} Interfaz de administración de usuarios con roles administrativos.
+ */
+const Dashboard = () => {
+  const initialData = {
+    nombre: "",
+    email: "",
+    password: "",
+    rol: "Admin",
+  };
+  const [form, setForm] = useState(initialData);
+  const [isOpen, setIsOpen] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [admins, setAdmins] = useState([]);
+  const port = import.meta.env.VITE_PORT;
+  const ipserver = import.meta.env.VITE_IP;
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    fetch(`http://${ipserver}:${port}/api/command/get-admins-role`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      method: 'GET',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          setErrors({ server: data.error });
+        } else {
+          setAdmins(data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setErrors({ server: 'Error en la solicitud: ' + error.message });
+      });
+  }, []);
+
+  const generatePassword = (e) => {
+    e.preventDefault();
+    const length = Math.floor(Math.random() * (27 - 12 + 1)) + 12;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&amp;*()_+~`|}{[]:;?>&lt;,./-=";
+    let password = "";
+    for (let i = 0, n = charset.length; i &lt; length; ++i) {
+      password += charset.charAt(Math.floor(Math.random() * n));
+    }
+    setForm({ ...form, password: password });
+  };
+
+  const columns = React.useMemo(
+    () => [
+      { Header: 'Nombre', accessor: 'nombre', id: 'nombre', sortType: 'alphanumeric' },
+      { Header: 'Email', accessor: 'email', sortType: 'alphanumeric' },
+      { Header: 'Rol', accessor: 'rol' },
+      { Header: 'Fecha ingreso', accessor: 'fecha_ingreso' },
+      {
+        Header: 'Acciones', accessor: 'acciones',
+        Cell: ({ row }) => (
+          &lt;div className={styles.actions}>
+            &lt;button onClick={() => handleDeleteUser(row.original.email)} className={styles.btnEliminar}>Eliminar&lt;/button>
+          &lt;/div>
+        )        
+      },
+    ],
+    []
+  );
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(form);
+    const token = localStorage.getItem('token');
+    fetch(`http://${ipserver}:${port}/api/command/insert-user-role`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      method: 'POST',
+      body: JSON.stringify(form),
+    })
+      .then((response) => response.json())
+
+      .then((data) => {
+        if (data.error) {
+          setErrors({ server: data.error });
+          alert(data.error);
+        } else {
+          console.log(data);
+          window.location.reload();
+          toast.success('Usuario creado exitosamente!');
+          setModal(false);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setErrors({ server: 'Error en la solicitud: ' + error.message });
+      });
+  };
+
+  const handleDeleteUser = async (email) => {
+    const confirmed = window.confirm("¿Estás seguro de que deseas eliminar este usuario?");
+    if (!confirmed) return;
+    fetch(`http://${ipserver}:${port}/api/command/delete-admins-roles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ email: email })
+    })
+    .then((response) => {
+      if (response.ok) {
+        console.log('Solicitud enviada exitosamente');
+        window.location.reload();
+        toast.success('Usuario eliminado exitosamente!');
+        return response.json();
+      } else {
+        console.error('Error al eliminar el usuario:', response.statusText);
+        setErrors({ server: 'Error en la solicitud: ' + response.statusText });
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      setErrors({ server: 'Error en la solicitud: ' + error.message });
+    });
+  };
+
+  const renderPermissions = () => {
+    if (form.rol === "Admin") {
+      return (
+        &lt;ul className={styles.descripcionRol}>
+          &lt;li>Ver, aceptar o rechazar solicitudes.&lt;/li>
+          &lt;li>Crear admins y ver ganancias.&lt;/li>
+          &lt;li>Ver usuario o eliminarlo.&lt;/li>
+        &lt;/ul>
+      );
+    } else if (form.rol === "Co-admin") {
+      return (
+        &lt;ul className={styles.descripcionRol}>
+          &lt;li>Ver, aceptar o rechazar solicitudes.&lt;/li>
+          &lt;li>Ver usuario pero no eliminarlo.&lt;/li>
+          &lt;li>Ver ganancias.&lt;/li>
+        &lt;/ul>
+      );
+    } else if (form.rol === "Revisor") {
+      return (
+        &lt;ul className={styles.descripcionRol}>
+          &lt;li>Solo ver solicitudes.&lt;/li>
+        &lt;/ul>
+      );
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  return (
+    &lt;div className={styles1.dashboardContainer}>
+      &lt;MenuDashboard toggleMenu={() => { setIsOpen(!isOpen) }} isOpen={isOpen} />
+
+      &lt;main className={`${styles1.content} ${isOpen ? styles1.open : ''}`}>
+        &lt;div className={styles1.header}>
+          &lt;div className={styles1.titleLogo}>
+            &lt;img src={logo} className={styles1.menuIcon} />
+            &lt;h1>Dashboard Admin&lt;/h1>
+          &lt;/div>
+          &lt;Notification_dashboard />
+        &lt;/div>
+        &lt;div className={styles.titleSectionAdmins}>
+          &lt;h1>Administradores&lt;/h1>
+          &lt;button className={styles.btnCrear} onClick={() => { setModal(true) }}>
+            &lt;FontAwesomeIcon icon={faUserPlus} className={styles.iconUser} />
+            &lt;span>Crear administrador&lt;/span>
+          &lt;/button>
+        &lt;/div>
+      
+          &lt;TableComponent columns={columns} data={admins} />
+      
+      &lt;/main>
+
+      {/* -----------------------MODAL----------------------- */}
+      &lt;div className={styles.modal} style={{ display: modal ? 'block' : 'none' }}>
+        &lt;div className={styles.modalContent}>
+          &lt;form onSubmit={handleSubmit}>
+            &lt;span onClick={() => { setModal(false) }}>
+              &lt;FontAwesomeIcon icon={faTimes} className={styles.close} />
+            &lt;/span>
+            &lt;h2>Crear administrador&lt;/h2>
+            &lt;div className={styles.inputGroup}>
+              &lt;label htmlFor="nombre">Nombre&lt;/label>
+              &lt;input type="text" value={form.nombre} name="nombre" autoComplete='off' placeholder='Co-admin...' onChange={handleChange} required />
+            &lt;/div>
+            &lt;div className={styles.inputGroup}>
+              &lt;label htmlFor="email">Email&lt;/label>
+              &lt;input type="email" value={form.email} name="email" autoComplete='off' placeholder='example@gmail.com' onChange={handleChange} required />
+            &lt;/div>
+            &lt;div className={styles.inputGroup}>
+              &lt;div className={styles.passInput}>
+                &lt;label htmlFor="password">Contraseña&lt;/label>
+                &lt;input type={!showPassword ? "password" : "text"} value={form.password} autoComplete='off' name="password" placeholder='Escriba una contraseña segura' onChange={handleChange} required />
+                &lt;button
+                  type="button" // Cambiado a type="button" para evitar el envío
+                  className={styles.showPass}
+                  onClick={(e) => {
+                    e.preventDefault(); // Evita que se envíe el formulario
+                    setShowPassword(!showPassword);
+                  }}
+                >
+                  &lt;FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className={styles.eyeIcon} />
+                &lt;/button>
+              &lt;/div>
+              &lt;button className={styles.randomPassword} onClick={generatePassword}>
+                &lt;span>Random Password&lt;/span>
+              &lt;/button>
+            &lt;/div>
+            &lt;div className={styles.rolGroup}>
+              &lt;select className={styles.optionsAdmin} value={form.rol} name="rol" onChange={handleChange}>
+                &lt;option value="Admin">Admin&lt;/option>
+                &lt;option value="Co-admin">Co-admin&lt;/option>
+                &lt;option value="Revisor">Revisor&lt;/option>
+              &lt;/select>
+              {renderPermissions()}
+            &lt;/div>
+            &lt;div className={styles.buttons}>
+              &lt;button className={styles.btnModal} type="submit">
+                &lt;span>Aceptar&lt;/span>
+              &lt;/button>
+              &lt;button className={styles.btnModal} onClick={() => setModal(false)}>
+                &lt;span>Cancelar&lt;/span>
+              &lt;/button>
+            &lt;/div>
+          &lt;/form>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default Dashboard;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AcceptRequestModal">AcceptRequestModal</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarGraphic">BarGraphic</a></li><li><a href="global.html#Boleta">Boleta</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CartolaPDF">CartolaPDF</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Dashboard_prices">Dashboard_prices</a></li><li><a href="global.html#Dashboard_profit">Dashboard_profit</a></li><li><a href="global.html#Dashboard_user">Dashboard_user</a></li><li><a href="global.html#DocsUser">DocsUser</a></li><li><a href="global.html#DuplicateUserModal">DuplicateUserModal</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#InputPassword">InputPassword</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#ItemUser">ItemUser</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginButton">LoginButton</a></li><li><a href="global.html#MenuDashboard">MenuDashboard</a></li><li><a href="global.html#ModalUser">ModalUser</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Nosotros">Nosotros</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#ParticlesComponent">ParticlesComponent</a></li><li><a href="global.html#PassChange">PassChange</a></li><li><a href="global.html#Recovery">Recovery</a></li><li><a href="global.html#Registro">Registro</a></li><li><a href="global.html#RejectRequestModal">RejectRequestModal</a></li><li><a href="global.html#RetornoPage">RetornoPage</a></li><li><a href="global.html#Solicitudes">Solicitudes</a></li><li><a href="global.html#SolicitudesList">SolicitudesList</a></li><li><a href="global.html#TableComponent">TableComponent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 21:08:16 GMT-0400 (Chile Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -2,6 +2,23 @@ import React from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import styles from "../Table/Table.module.css";
 
+/**
+ * Componente de tabla reutilizable con paginación y ordenamiento.
+ *
+ * @component
+ * @param {Object[]} columns - Definición de las columnas para la tabla, compatible con react-table.
+ * @param {Object[]} data - Datos a mostrar en la tabla.
+ * @param {function} [actionsRenderer] - Función opcional que recibe el objeto original de la fila y retorna elementos JSX para acciones personalizadas.
+ *
+ * @example
+ * <TableComponent
+ *   columns={columns}
+ *   data={data}
+ *   actionsRenderer={(row) => <button onClick={() => handleEdit(row)}>Editar</button>}
+ * />
+ *
+ * @returns {JSX.Element} Tabla con paginación, ordenamiento y acciones personalizadas por fila.
+ */
 const TableComponent = ({ columns, data, actionsRenderer }) => {
   const {
     getTableProps,

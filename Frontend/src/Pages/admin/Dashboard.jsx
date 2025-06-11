@@ -22,6 +22,23 @@ const InfoCard = ({ title, value, change, icon, onClick }) => (
   </div>
 );
 
+/**
+ * Componente principal del panel de administración (Dashboard).
+ *
+ * Este componente muestra un resumen de estadísticas clave para los administradores,
+ * incluyendo ingresos totales, usuarios registrados, solicitudes recibidas y gráficos
+ * de actividad reciente. Además, presenta una tabla con la lista de solicitudes recientes.
+ *
+ * Funcionalidades principales:
+ * - Visualización de estadísticas generales y gráficas de los últimos 7 días.
+ * - Acceso rápido a secciones específicas mediante tarjetas informativas.
+ * - Visualización de notificaciones solo para usuarios con rol de "Administrador".
+ * - Navegación a diferentes vistas del panel de administración.
+ * - Presentación de una tabla con información relevante de solicitudes.
+ *
+ * @component
+ * @returns {JSX.Element} El componente Dashboard renderizado.
+ */
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const token = localStorage.getItem('token');

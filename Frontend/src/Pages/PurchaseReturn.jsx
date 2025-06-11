@@ -2,6 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styles from '@styles/retorno.module.css';
 
+/**
+ * Página de retorno de compra para clientes.
+ *
+ * Esta página valida un token de verificación recibido por URL para confirmar la validez de la transacción.
+ * Si el token es válido, muestra un mensaje de confirmación de pago exitoso y un contador regresivo que redirige automáticamente al usuario a la página principal después de unos segundos.
+ * Si el token no es válido o no está presente, redirige al usuario a la página anterior o a la página principal.
+ *
+ * @component
+ * @returns {JSX.Element|null} El componente de confirmación de pago o null mientras se valida el token.
+ */
 const RetornoPage = () => {
   const [isValid, setIsValid] = useState(false);
   const [counter, setCounter] = useState(7);

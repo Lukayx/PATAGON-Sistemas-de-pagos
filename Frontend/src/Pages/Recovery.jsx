@@ -8,6 +8,24 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import ParticlesBG from '@components/Particles/ParticlesBG';
 import useNewPassword from '@hooks/newPassword'; // Importar el hook
 
+/**
+ * Componente Recovery
+ *
+ * Página de recuperación de contraseña para usuarios.
+ * Permite al usuario ingresar su correo electrónico para solicitar el restablecimiento de su contraseña.
+ * Incluye validación de formato de correo electrónico y muestra mensajes de error o éxito según la respuesta.
+ *
+ * Hooks utilizados:
+ * - useForm: Maneja el estado del formulario, validaciones y eventos de cambio/envío.
+ * - useNewPassword: Proporciona la función para solicitar el restablecimiento de contraseña y estados de error/éxito.
+ *
+ * Elementos principales:
+ * - InputText: Campo de entrada para el correo electrónico.
+ * - LoginButton: Botón para enviar la solicitud de recuperación.
+ * - Mensajes de error y éxito según la validación y la respuesta del servidor.
+ *
+ * @component
+ */
 const Recovery = () => {
   const initialData = {
     email: ''

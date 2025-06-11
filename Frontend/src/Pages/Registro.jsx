@@ -8,6 +8,23 @@ import InputText from '@components/InputText/inputText';
 import { faEnvelope, faUser, faLock } from '@fortawesome/free-solid-svg-icons';
 import ParticlesBG from '@components/Particles/ParticlesBG';
 
+/**
+ * Página de registro de usuario.
+ *
+ * Este componente renderiza un formulario de registro que permite a los usuarios crear una nueva cuenta.
+ * Incluye validación de campos para nombre de usuario, correo electrónico y contraseña.
+ * Utiliza el hook personalizado `useForm` para manejar el estado del formulario, validaciones y envío.
+ *
+ * Validaciones:
+ * - El nombre de usuario solo puede contener letras y espacios.
+ * - El correo electrónico debe tener un formato válido.
+ * - La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.
+ * - Las contraseñas deben coincidir.
+ *
+ * Muestra mensajes de error específicos para cada campo en caso de validación fallida.
+ *
+ * @component
+ */
 const Registro = () => {
   const initialData = {
     username: '',

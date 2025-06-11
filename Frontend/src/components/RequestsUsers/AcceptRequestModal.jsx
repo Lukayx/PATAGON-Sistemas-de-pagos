@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import styles from '../RequestsUsers/AcceptRequestModal.module.css';
 
+/**
+ * Modal para aceptar una solicitud de usuario.
+ *
+ * @component
+ * @param {Object} props - Props del componente.
+ * @param {boolean} props.isOpen - Indica si el modal está abierto.
+ * @param {function} props.onClose - Función para cerrar el modal.
+ * @param {function} props.onAccept - Función que se llama al aceptar la solicitud, recibe los datos del formulario.
+ * @param {Object} props.solicitud - Objeto con los datos de la solicitud a aceptar.
+ * @param {string} props.solicitud.nombre - Nombre completo del solicitante.
+ * @param {string} props.solicitud.email - Email del solicitante.
+ * @param {number|string} props.solicitud.ID_request - ID de la solicitud.
+ *
+ * @returns {JSX.Element|null} El modal de aceptación de solicitud o null si no está abierto.
+ */
 const AcceptRequestModal = ({ isOpen, onClose, onAccept, solicitud }) => {
   const [formData, setFormData] = useState({
     nombre: '',

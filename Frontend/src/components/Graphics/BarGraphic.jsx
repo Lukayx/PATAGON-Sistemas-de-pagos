@@ -23,6 +23,17 @@ ChartJs.register(
     Filler
 );
 
+/**
+ * Componente que renderiza un gráfico de barras utilizando los datos y opciones proporcionados.
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {string[]} props.labels - Etiquetas para el eje X del gráfico.
+ * @param {number[]} props.dataPoints - Valores numéricos para cada barra del gráfico.
+ * @param {string} props.title - Título del gráfico y de la leyenda.
+ * @param {string} props.color - Color principal para las barras y bordes del gráfico (en formato CSS).
+ * @returns {JSX.Element} Elemento JSX que representa el gráfico de barras.
+ */
 const BarGraphic = ({ labels, dataPoints, title, color }) => {
     const midata = {
         labels,

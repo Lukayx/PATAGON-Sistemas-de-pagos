@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Pages/PassChange.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Pages/PassChange.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect } from 'react';
+import style from '@styles/LoginGeneral.module.css';
+import style2 from '@styles/Registro.module.css';
+import useForm from '@hooks/registerForm';
+import LoginButton from '@components/loginButton/loginButton';
+import ParticlesBG from '@components/Particles/ParticlesBG';
+import InputPassword from '@components/InputPassword/inputPassword';
+import useNewPassword from '@hooks/changePassword.js'; 
+
+/**
+ * Componente de React para la página de cambio de contraseña.
+ *
+ * Esta página permite al usuario establecer una nueva contraseña utilizando un token recibido por URL.
+ * Incluye validaciones de seguridad para la contraseña, como longitud mínima, inclusión de mayúsculas y números,
+ * y verificación de coincidencia entre la contraseña y su confirmación.
+ * 
+ * Funcionalidades principales:
+ * - Obtiene el token de la URL para autorizar el cambio de contraseña.
+ * - Valida los campos de contraseña y confirmación antes de enviar.
+ * - Muestra mensajes de error y éxito según la respuesta del backend y las validaciones locales.
+ * - Deshabilita los campos y el botón de envío mientras se procesa la solicitud.
+ *
+ * @component
+ * @returns {JSX.Element} Página de cambio de contraseña.
+ */
+const PassChange = () => {
+  const initialData = {
+    password: '',
+    confirmPassword: ''
+  };
+
+  const onValidate = (form) => {
+    let errors = {};
+    let isError = false;
+
+    if (!form.password.trim()) {
+      errors.password = "La contraseña no puede estar vacía";
+      isError = true;
+    } else if (!/(?=.*[A-Z])/.test(form.password)) {
+      errors.password = "La contraseña debe contener al menos una letra mayúscula.";
+      isError = true;
+    } else if (!/(?=.*\d)/.test(form.password)) {
+      errors.password = "La contraseña debe contener al menos un número.";
+      isError = true;
+    } else if (form.password.length &lt; 8) {
+      errors.password = "La contraseña debe tener al menos 8 caracteres.";
+      isError = true;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      errors.confirmPassword = "Las contraseñas no coinciden.";
+      isError = true;
+    }
+
+    return isError ? errors : null;
+  };
+
+  const { form, errors, loading, handleChange } = useForm(initialData, onValidate);
+  const { changePassword, error: backendError, success, loading: backendLoading } = useNewPassword();
+
+  // Obtener el token de la URL
+  const queryParams = new URLSearchParams(window.location.search);
+  const token = queryParams.get('token');
+
+
+  // Validación adicional para asegurar que el token esté presente
+  const isTokenValid = token &amp;&amp; token.length > 0;
+
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+
+    // Validamos que el token esté presente
+    if (!isTokenValid) {
+      alert("El token es requerido.");
+      return;
+    }
+    const validationErrors = onValidate(form);
+    if (!validationErrors) {
+      changePassword(form.password, token); // Enviar la nueva contraseña y el token
+    } else {
+      if (validationErrors.confirmPassword) {
+        alert(validationErrors.confirmPassword);
+      } else if (validationErrors.password) {
+        alert(validationErrors.password);
+      }
+    }
+  };
+
+  return (
+    &lt;>
+      &lt;ParticlesBG />
+      &lt;div className={style.body}>
+        &lt;div className={style.contenedor}>
+          &lt;form onSubmit={handlePasswordChange}>
+            &lt;h1>Cambiar Contraseña&lt;/h1>
+            &lt;InputPassword 
+              type="password"
+              id="password"
+              value={form.password}
+              label="Nueva Contraseña"
+              handleChange={handleChange}
+              disabled={loading || backendLoading}
+            />
+            {errors.password &amp;&amp; &lt;div className={style2.errorMessage}>{errors.password}&lt;/div>}
+
+            &lt;InputPassword
+              type="password"
+              id="confirmPassword"
+              value={form.confirmPassword}
+              label="Confirmar Contraseña"
+              handleChange={handleChange}
+              disabled={loading || backendLoading}
+            />
+            {errors.confirmPassword &amp;&amp; &lt;div className={style2.errorMessage}>{errors.confirmPassword}&lt;/div>}
+
+            {backendError &amp;&amp; &lt;div className={style2.errorMessage}>{backendError}&lt;/div>}
+            {success &amp;&amp; &lt;div className={style2.successMessage}>{success}&lt;/div>}
+
+            &lt;LoginButton text="Cambiar Contraseña" disabled={loading || backendLoading} />
+          &lt;/form>
+        &lt;/div>
+      &lt;/div>
+    &lt;/>
+  );
+};
+
+export default PassChange;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AcceptRequestModal">AcceptRequestModal</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarGraphic">BarGraphic</a></li><li><a href="global.html#Boleta">Boleta</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CartolaPDF">CartolaPDF</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Dashboard_prices">Dashboard_prices</a></li><li><a href="global.html#Dashboard_profit">Dashboard_profit</a></li><li><a href="global.html#Dashboard_user">Dashboard_user</a></li><li><a href="global.html#DocsUser">DocsUser</a></li><li><a href="global.html#DuplicateUserModal">DuplicateUserModal</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#InputPassword">InputPassword</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#ItemUser">ItemUser</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginButton">LoginButton</a></li><li><a href="global.html#MenuDashboard">MenuDashboard</a></li><li><a href="global.html#ModalUser">ModalUser</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Nosotros">Nosotros</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#ParticlesComponent">ParticlesComponent</a></li><li><a href="global.html#PassChange">PassChange</a></li><li><a href="global.html#Recovery">Recovery</a></li><li><a href="global.html#Registro">Registro</a></li><li><a href="global.html#RejectRequestModal">RejectRequestModal</a></li><li><a href="global.html#RetornoPage">RetornoPage</a></li><li><a href="global.html#Solicitudes">Solicitudes</a></li><li><a href="global.html#SolicitudesList">SolicitudesList</a></li><li><a href="global.html#TableComponent">TableComponent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 21:08:16 GMT-0400 (Chile Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/RequestCard/Card.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/RequestCard/Card.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>  import React, { useState } from 'react';
+  import styles from './Card.module.css';
+
+  /**
+   * Componente Card que muestra la información de una solicitud y permite gestionarla.
+   *
+   * @component
+   * @param {Object} props - Propiedades del componente.
+   * @param {Object} props.solicitud - Objeto con los datos de la solicitud (nombre, email, institucion, estado, fecha, ID_request).
+   * @param {Function} props.updateSolicitudes - Función para actualizar el estado de las solicitudes en el componente padre.
+   * @param {string} props.delay - Valor para animación de aparición de la tarjeta.
+   *
+   * @returns {JSX.Element} Elemento JSX que representa una tarjeta de solicitud con acciones para aceptar, rechazar y visualizar archivos adjuntos.
+   *
+   * @example
+   * &lt;Card
+   *   solicitud={solicitud}
+   *   updateSolicitudes={updateSolicitudes}
+   *   delay="0.2s"
+   * />
+   */
+  const Card = ({ solicitud, updateSolicitudes, delay }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [inputText, setInputText] = useState('');
+    const [modalAction, setModalAction] = useState(null);
+    const [isExpanded, setIsExpanded] = useState(false);
+    const ipserver = import.meta.env.VITE_IP;
+    const port = import.meta.env.VITE_PORT;
+
+    const handleViewPDF = async () => {
+      const id = solicitud.ID_request;
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch(`http://${ipserver}:${port}/viewPDF/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          throw new Error(`Error: ${response.status} ${response.statusText}. ${errorData}`);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+
+      } catch (error) {
+        console.error('Error al obtener el PDF:', error.message);
+      }
+    };
+
+    const handleViewPUB = async () => {
+      const id = solicitud.ID_request;
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch(`http://${ipserver}:${port}/viewPUB/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          throw new Error(`Error: ${response.status} ${response.statusText}. ${errorData}`);
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+
+      } catch (error) {
+        console.error('Error al obtener el archivo .pub:', error.message);
+      }
+    };
+
+    const handleAccept = () => {
+      setModalAction('accept'); 
+      setIsModalOpen(true); 
+    };
+
+    const handleReject = () => {
+      setModalAction('reject'); 
+      setIsModalOpen(true); 
+    };
+
+    const handleModalSubmit = async (e) => {
+      e.preventDefault();
+      const action = modalAction === 'accept' ? 'aceptado' : 'rechazado';
+
+      const requestBody = {
+        nombre: solicitud.nombre,
+        email: solicitud.email,
+        accion: action,
+        comentario: inputText, 
+      };
+
+      try {
+        const response = await fetch(`http://${ipserver}:${port}/api/command/new-user-creation`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        if (response.ok) {
+          console.log('Solicitud procesada exitosamente');
+          updateSolicitudes({ ...solicitud, estado: action });
+        } else {
+          const errorData = await response.text();
+          console.error('Error al procesar la solicitud:', errorData);
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error.message);
+      }
+
+      setInputText('');
+      setIsModalOpen(false);
+    };
+
+    return (
+      &lt;div className={styles.card} style={{ '--animationDelay': delay }}>
+        &lt;div className={styles.details}>
+          &lt;h3 className={styles.title}>{solicitud.nombre}&lt;/h3>
+          &lt;button
+            className={styles.expandButton}
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? 'Ocultar detalles' : 'Mostrar detalles'}
+          &lt;/button>
+          {isExpanded &amp;&amp; (
+            &lt;div className={styles.expandedDetails}>
+              &lt;p className={styles.info}>&lt;strong>Email:&lt;/strong> {solicitud.email}&lt;/p>
+              &lt;p className={styles.info}>&lt;strong>Institución:&lt;/strong> {solicitud.institucion}&lt;/p>
+              &lt;p className={styles.info}>&lt;strong>Estado:&lt;/strong> {solicitud.estado}&lt;/p>
+              &lt;p className={styles.info}>&lt;strong>Fecha:&lt;/strong> {solicitud.fecha}&lt;/p>
+            &lt;/div>
+          )}
+        &lt;/div>
+
+        &lt;div className={styles.files}>
+          &lt;button
+            className={styles.fileButton}
+            title="Ver PDF"
+            onClick={handleViewPDF}
+          >
+            &lt;img
+              src="/icons/pdf-icon.svg"
+              alt="Ver PDF"
+              className={styles.fileIcon}
+            />
+          &lt;/button>
+          &lt;button
+            className={styles.fileButton}
+            title="Ver PUB"
+            onClick={handleViewPUB}
+          >
+            &lt;img
+              src="/icons/pub_icon.svg"
+              alt="Ver PUB"
+              className={styles.fileIcon}
+            />
+          &lt;/button>
+        &lt;/div>
+        
+        {solicitud.estado === 'pendiente' &amp;&amp; (
+          &lt;div className={styles.actions}>
+            &lt;button className={styles.actionButton} onClick={handleAccept}>
+              Aceptar
+            &lt;/button>
+            &lt;button className={styles.actionButton} onClick={handleReject}>
+              Rechazar
+            &lt;/button>
+          &lt;/div>
+        )}
+        
+        {/* Modal para ingresar texto */}
+        {isModalOpen &amp;&amp; (
+          &lt;div className={styles.modalOverlay}>
+            &lt;div className={styles.modalContent}>
+              &lt;h2>{modalAction === 'accept' ? 'Ingrese SSH' : 'Motivo de rechazo'}&lt;/h2>
+              &lt;form onSubmit={handleModalSubmit}>
+                &lt;textarea
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  rows="4"
+                  placeholder="Escriba su comentario aquí..."
+                  required
+                />
+                &lt;div className={styles.modalActions}>
+                  &lt;button type="button" onClick={() => setIsModalOpen(false)}>Cancelar&lt;/button>
+                  &lt;button type="submit">Enviar&lt;/button>
+                &lt;/div>
+              &lt;/form>
+            &lt;/div>
+          &lt;/div>
+        )}
+      &lt;/div>
+    );
+  };
+
+  export default Card;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AcceptRequestModal">AcceptRequestModal</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarGraphic">BarGraphic</a></li><li><a href="global.html#Boleta">Boleta</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CartolaPDF">CartolaPDF</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Dashboard_prices">Dashboard_prices</a></li><li><a href="global.html#Dashboard_profit">Dashboard_profit</a></li><li><a href="global.html#Dashboard_user">Dashboard_user</a></li><li><a href="global.html#DocsUser">DocsUser</a></li><li><a href="global.html#DuplicateUserModal">DuplicateUserModal</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#InputPassword">InputPassword</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#ItemUser">ItemUser</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginButton">LoginButton</a></li><li><a href="global.html#MenuDashboard">MenuDashboard</a></li><li><a href="global.html#ModalUser">ModalUser</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Nosotros">Nosotros</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#ParticlesComponent">ParticlesComponent</a></li><li><a href="global.html#PassChange">PassChange</a></li><li><a href="global.html#Recovery">Recovery</a></li><li><a href="global.html#Registro">Registro</a></li><li><a href="global.html#RejectRequestModal">RejectRequestModal</a></li><li><a href="global.html#RetornoPage">RetornoPage</a></li><li><a href="global.html#Solicitudes">Solicitudes</a></li><li><a href="global.html#SolicitudesList">SolicitudesList</a></li><li><a href="global.html#TableComponent">TableComponent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 21:08:16 GMT-0400 (Chile Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

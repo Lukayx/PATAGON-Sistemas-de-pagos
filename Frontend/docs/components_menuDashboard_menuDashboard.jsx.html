@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/menuDashboard/menuDashboard.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/menuDashboard/menuDashboard.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import { useLocation } from 'react-router-dom'; // Importa useLocation para obtener la URL actual
+import styles from '../menuDashboard/menuDashboard.module.css'; // Importa tu archivo de estilos como módulo
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTachometerAlt, faClipboard, faUsers, faDollarSign, faSackDollar , faSignOutAlt, faTimes, faBars, faUserShield} from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from 'jwt-decode';
+
+
+/**
+ * Componente MenuDashboard
+ *
+ * Renderiza el menú lateral de navegación del dashboard, mostrando diferentes opciones según el rol del usuario autenticado.
+ * El menú permite navegar entre distintas secciones del sistema y cerrar sesión.
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {Function} props.toggleMenu - Función para alternar la visibilidad del menú lateral.
+ * @param {boolean} props.isOpen - Indica si el menú lateral está abierto o cerrado.
+ *
+ * @returns {JSX.Element} Elemento JSX que representa el menú de navegación del dashboard.
+ */
+const MenuDashboard = ({ toggleMenu, isOpen }) => {
+  const location = useLocation(); // Obtén la URL actual  
+  const token = localStorage.getItem('token'); // Obtiene el token del localStorage
+  const decodedToken = jwtDecode(token); // Decodifica el token
+  const userRole = decodedToken.rol; // Obtén el rol del token decodificado
+
+  // Verifica si la ruta actual es la misma que la ruta del enlace
+  const isActive = (path) => location.pathname === path;
+
+  const logout = (event) => {
+    event.preventDefault();
+    localStorage.removeItem('token'); // Elimina el token del localStorage
+    localStorage.removeItem('refreshToken'); // Elimina el refreshToken del localStorage
+    window.location.href = event.target.href; // Redirige al usuario a la ruta especificada en el enlace
+  };
+
+  return (
+    &lt;div>
+      &lt;aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+        &lt;button className={`${styles.hamburger} ${isOpen ? styles.open : ''}`} onClick={toggleMenu} tabIndex='-1'>
+          &lt;FontAwesomeIcon icon={isOpen ? faTimes : faBars} className={styles.faIcon}/>
+        &lt;/button>
+        &lt;div className={styles.profile}>
+          &lt;img className={styles.profilePic} src='../../src/assets/perro.png' alt='Profile'>&lt;/img>
+          &lt;h2>{decodedToken.username ? decodedToken.username : 'Administrador' }&lt;/h2>
+        &lt;/div>
+        &lt;nav className={styles.menu}>
+          &lt;ul>
+
+            {(userRole === 'Administrador' || userRole === 'Co-admin') &amp;&amp; (
+            &lt;li className={isActive('/dashboard') ? styles.active : ''} onClick={() => window.location.href = '/dashboard'}>
+              &lt;a href='/dashboard' tabIndex='-1'>
+                &lt;FontAwesomeIcon icon={faTachometerAlt} className={styles.faIcon} />
+                &lt;span>Dashboard&lt;/span>
+              &lt;/a>
+            &lt;/li>
+            )}
+
+            {(userRole === 'Administrador' || userRole === 'Co-admin' || userRole == 'Revisor') &amp;&amp; (
+            &lt;li className={isActive('/admin/dashboard-requests') ? styles.active : ''} onClick={() => window.location.href = '/admin/dashboard-requests'}>
+              &lt;a href='/admin/dashboard-requests' tabIndex='-1'>
+                &lt;FontAwesomeIcon icon={faClipboard} className={styles.faIcon} />
+                &lt;span>Solicitudes&lt;/span>
+              &lt;/a>
+            &lt;/li>
+            )}
+
+            {(userRole === 'Administrador') &amp;&amp; (
+            &lt;li className={isActive('/admin/dashboard-roles') ? styles.active : ''} onClick={() => window.location.href = '/admin/dashboard-roles'}>
+              &lt;a href='/admin/dashboard-roles' tabIndex='-1'>
+                &lt;FontAwesomeIcon icon={faUserShield} className={styles.faIcon} />
+                &lt;span>Administrador&lt;/span>
+              &lt;/a>
+            &lt;/li>
+            )}
+
+            {(userRole === 'Administrador' || userRole === 'Co-admin') &amp;&amp; (
+            &lt;li className={isActive('/admin/dashboard-users') ? styles.active : ''} onClick={() => window.location.href = '/admin/dashboard-users'}>
+              &lt;a href='/admin/dashboard-users' tabIndex='-1'>
+                &lt;FontAwesomeIcon icon={faUsers} className={styles.faIcon} />
+                &lt;span>Usuarios&lt;/span>
+              &lt;/a>
+            &lt;/li>
+            )}
+
+            {(userRole === 'Administrador' || userRole === 'Co-admin') &amp;&amp; (
+            &lt;li className={isActive('/admin/dashboard-profit') ? styles.active : ''} onClick={() => window.location.href = '/admin/dashboard-profit'}>
+              &lt;a href='/admin/dashboard-profit' tabIndex='-1'>
+                &lt;FontAwesomeIcon icon={faDollarSign} className={styles.faIcon} />
+                &lt;span>Ganancias&lt;/span>
+              &lt;/a>
+            &lt;/li>
+            )}
+
+            {(userRole === 'Administrador' || userRole === 'Co-admin') &amp;&amp; (
+            &lt;li className={isActive('/dashboard-prices') ? styles.active : ''} onClick={() => window.location.href = '/dashboard-prices'}>
+              &lt;a href='/dashboard-prices' tabIndex='-1'>
+                &lt;FontAwesomeIcon icon={faSackDollar } className={styles.faIcon} />
+                &lt;span>Configuración&lt;/span>
+              &lt;/a>
+            &lt;/li>
+            )}
+
+            &lt;li className={isActive('/') ? styles.active : ''} onClick={() => window.location.href = '/'}>
+              &lt;a href='/' onClick={logout} tabIndex='-1'>
+                &lt;FontAwesomeIcon icon={faSignOutAlt} className={styles.faIcon} />
+                &lt;span>Cerrar&lt;/span>
+              &lt;/a>
+            &lt;/li>
+          &lt;/ul>
+        &lt;/nav>
+      &lt;/aside>
+    &lt;/div>
+  );
+};
+
+export default MenuDashboard;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AcceptRequestModal">AcceptRequestModal</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarGraphic">BarGraphic</a></li><li><a href="global.html#Boleta">Boleta</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CartolaPDF">CartolaPDF</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Dashboard_prices">Dashboard_prices</a></li><li><a href="global.html#Dashboard_profit">Dashboard_profit</a></li><li><a href="global.html#Dashboard_user">Dashboard_user</a></li><li><a href="global.html#DocsUser">DocsUser</a></li><li><a href="global.html#DuplicateUserModal">DuplicateUserModal</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#InputPassword">InputPassword</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#ItemUser">ItemUser</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginButton">LoginButton</a></li><li><a href="global.html#MenuDashboard">MenuDashboard</a></li><li><a href="global.html#ModalUser">ModalUser</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Nosotros">Nosotros</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#ParticlesComponent">ParticlesComponent</a></li><li><a href="global.html#PassChange">PassChange</a></li><li><a href="global.html#Recovery">Recovery</a></li><li><a href="global.html#Registro">Registro</a></li><li><a href="global.html#RejectRequestModal">RejectRequestModal</a></li><li><a href="global.html#RetornoPage">RetornoPage</a></li><li><a href="global.html#Solicitudes">Solicitudes</a></li><li><a href="global.html#SolicitudesList">SolicitudesList</a></li><li><a href="global.html#TableComponent">TableComponent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 21:08:16 GMT-0400 (Chile Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

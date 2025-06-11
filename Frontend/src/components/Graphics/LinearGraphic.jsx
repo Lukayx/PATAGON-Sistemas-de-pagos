@@ -23,6 +23,17 @@ ChartJs.register(
     Filler
 );
 
+/**
+ * Componente que renderiza un gráfico lineal utilizando los datos y configuraciones proporcionadas.
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {Array<string>} [props.labels=[]] - Etiquetas para el eje X del gráfico.
+ * @param {Array<number>} [props.dataPoints=[]] - Puntos de datos para la serie del gráfico.
+ * @param {string} [props.title='Título del Gráfico'] - Título que se muestra en la parte superior del gráfico.
+ * @param {string} [props.color='rgb(75, 192, 192)'] - Color principal de la línea y los puntos del gráfico.
+ * @returns {JSX.Element} Elemento JSX que representa el gráfico lineal.
+ */
 export default function LinearGraphic({ labels = [], dataPoints = [], title = 'Título del Gráfico', color = 'rgb(75, 192, 192)' }) {
     // Configuración de los datos del gráfico
     const chartData = {

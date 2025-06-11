@@ -7,6 +7,23 @@ import particleConfig from './config/setup';
 
 
 // Componente que permite el uso de particulas 
+/**
+ * Componente de fondo de partículas animadas utilizando React y tsParticles.
+ * 
+ * Este componente renderiza un canvas de partículas como fondo animado,
+ * utilizando la configuración proporcionada por `particleConfig`.
+ * El canvas se posiciona absolutamente para ocupar toda la pantalla y
+ * se sitúa detrás del contenido principal mediante `zIndex`.
+ * 
+ * @component
+ * @example
+ * <ParticlesComponent id="particles-bg" />
+ * 
+ * @param {Object} props - Propiedades del componente.
+ * @param {string} props.id - Identificador único para el canvas de partículas.
+ * 
+ * @returns {JSX.Element} Un div conteniendo el canvas de partículas y el contenido superpuesto.
+ */
 const ParticlesComponent = React.memo((props) => {
   const [init, setInit] = useState(false);
 

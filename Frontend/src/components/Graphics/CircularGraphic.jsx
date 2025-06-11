@@ -9,6 +9,17 @@ import {
 // Registra los componentes necesarios de Chart.js
 ChartJs.register(ArcElement, Tooltip, Legend);
 
+/**
+ * Componente que renderiza un gráfico circular (Doughnut) utilizando los datos y configuraciones proporcionadas.
+ *
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {string[]} [props.labels=[]] - Etiquetas para cada segmento del gráfico.
+ * @param {number[]} [props.dataPoints=[]] - Valores numéricos para cada segmento del gráfico.
+ * @param {string} [props.title='Título del Gráfico'] - Título que se muestra en la parte superior del gráfico.
+ * @param {string[]} [props.colors=['#36A2EB', '#FF6384', '#FFCE56']] - Colores para cada segmento del gráfico.
+ * @returns {JSX.Element} Elemento JSX que representa el gráfico circular.
+ */
 export default function CircularGraphic({ labels = [], dataPoints = [], title = 'Título del Gráfico', colors = ['#36A2EB', '#FF6384', '#FFCE56'] }) {
     // Configuración de los datos del gráfico
     const chartData = {

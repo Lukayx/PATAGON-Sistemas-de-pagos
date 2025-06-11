@@ -3,6 +3,17 @@ import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom'; 
 import styles from '@styles/Notifications.module.css';
 
+/**
+ * Componente Notifications
+ * 
+ * Página de administración que muestra notificaciones en tiempo real cuando se recibe una nueva solicitud.
+ * Utiliza un socket para escuchar eventos 'newRequest' desde el servidor y muestra una notificación animada
+ * por cada nueva solicitud recibida. Las notificaciones desaparecen automáticamente después de 5 segundos.
+ * Al hacer clic en una notificación, redirige al usuario a la página de solicitudes del dashboard.
+ * 
+ * @component
+ * @returns {JSX.Element} Elemento React que representa el área de notificaciones para el administrador.
+ */
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
     const navigate = useNavigate(); 

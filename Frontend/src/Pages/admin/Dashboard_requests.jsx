@@ -15,6 +15,23 @@ import { toast } from 'sonner';
 import refreshAccessToken from '@components/RefreshToken';
 import DuplicateUserModal from '@components/DuplicateUsers/DuplicateUserModal';
 
+/**
+ * Componente de administración para gestionar las solicitudes de nuevos usuarios.
+ * Permite visualizar, filtrar, aceptar, rechazar y exportar solicitudes.
+ * 
+ * Funcionalidades principales:
+ * - Visualización de solicitudes en una tabla con filtros por estado (pendiente, aceptado, rechazado).
+ * - Visualización de documentos asociados a cada solicitud (PDF y clave pública).
+ * - Aceptación y rechazo de solicitudes mediante modales de confirmación.
+ * - Manejo de casos de duplicidad de correo electrónico con modal informativo.
+ * - Exportación del historial de solicitudes a Excel.
+ * - Navegación hacia el dashboard de usuarios en caso de duplicidad.
+ * 
+ * Acceso restringido a acciones de aceptación/rechazo según el rol del usuario (Administrador o Co-admin).
+ * 
+ * @component
+ * @returns {JSX.Element} Página de administración de solicitudes.
+ */
 const Solicitudes = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { solicitudes, loading, error } = useFetchSolicitudes();

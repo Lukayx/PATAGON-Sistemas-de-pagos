@@ -3,6 +3,16 @@ import styles from '@styles/notfound.module.css';
 import ParticlesBG from "@components/Particles/ParticlesBG";
 import { jwtDecode } from 'jwt-decode';
 
+/**
+ * Componente de página "No Encontrada" (404).
+ * 
+ * Muestra un mensaje de error cuando el usuario intenta acceder a una página inexistente
+ * o sin los permisos necesarios. Según el rol del usuario autenticado, redirige al
+ * dashboard correspondiente o a la página principal del cliente.
+ *
+ * @component
+ * @returns {JSX.Element} Página de error 404 con opción de redirección según el rol del usuario.
+ */
 const NotFound = () => {
   const token = localStorage.getItem('token');
   let decodedToken, userRole;

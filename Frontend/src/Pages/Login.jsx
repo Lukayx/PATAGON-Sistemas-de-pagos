@@ -8,6 +8,17 @@ import style from "@styles/LoginGeneral.module.css";
 import style2 from "@styles/Login.module.css";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
+/**
+ * Componente de página de inicio de sesión para clientes.
+ *
+ * Renderiza un formulario de inicio de sesión con campos para correo electrónico y contraseña,
+ * manejo de errores, y opciones adicionales como "Recordarme", recuperación de contraseña,
+ * registro y acceso como invitado. Utiliza un hook personalizado `useForm` para gestionar el
+ * estado del formulario, validaciones y envío.
+ *
+ * @component
+ * @returns {JSX.Element} Página de inicio de sesión para clientes.
+ */
 function Login() {
   const initialData = {
     email: "",

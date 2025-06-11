@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: App.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: App.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import styles from "@adminStyles/Notifications_Sonner.module.css";
+import ProtectedRoute from '@components/ProtectedRoute';
+import 'primeicons/primeicons.css'; 
+import 'primereact/resources/themes/saga-blue/theme.css'; 
+import 'primereact/resources/primereact.min.css'; 
+
+import Login from '@pages/Login';
+import Registro from '@pages/Registro';
+import NotFound from '@pages/NotFound';
+import RetornoPage from '@pages/PurchaseReturn';
+import Recovery from '@pages/Recovery';
+import PassChange from '@pages/PassChange';
+
+import Dashboard from '@adminPage/Dashboard';
+import Dashboard_user from '@adminPage/Dashboard_user';
+import Dashboard_profit from '@adminPage/Dashboard_profit';
+import Dashboard_prices from '@adminPage/Dashboard_prices';
+import Dashboard_admin from '@adminPage/Dashboard_admin';
+import Dashboard_requests from '@adminPage/Dashboard_requests';
+
+import MainClient from '@clientPage/main';
+import Student from '@clientPage/Student';
+import External from '@clientPage/External';
+import UsInfo from '@clientPage/UsInfo';
+import Bags from '@clientPage/Bags';
+import Docs from '@clientPage/Docs';
+import UseRequest from '@clientPage/UseRequest';
+import Profile from '@clientPage/Profile';
+import PurchaseHistory from '@clientPage/PurchaseHistory';
+import Privacy from '@clientPage/Privacy';
+import Terms from '@clientPage/Terms';
+import PurchaseDetails from '@clientPage/PurchaseDetails';
+
+
+
+
+/**
+ * Componente principal de la aplicación que define las rutas utilizando React Router.
+ *
+ * @component
+ * @returns {JSX.Element} El árbol de rutas de la aplicación.
+ *
+ * @description
+ * Este componente configura todas las rutas principales de la aplicación, incluyendo rutas públicas y protegidas.
+ * Utiliza el componente `ProtectedRoute` para restringir el acceso a ciertas rutas según los roles de usuario.
+ * También incluye rutas para autenticación, paneles de administración, información, historial de compras, y manejo de errores 404.
+ */
+function App() {
+  return (
+    &lt;Router>
+      &lt;Routes>
+        &lt;Route path="/" element={&lt;Login />} />
+        &lt;Route path="/registro" element={&lt;Registro />} />
+        &lt;Route path="/recovery" element={&lt;Recovery />} />
+        &lt;Route path="/newPass" element={&lt;PassChange />} />
+
+        &lt;Route path="/dashboard" element={
+          &lt;ProtectedRoute isAllowed={["Administrador", "Co-admin"]}>
+            &lt;Dashboard />
+          &lt;/ProtectedRoute>
+        } />
+        
+        &lt;Route path="/admin/dashboard-profit" element={
+          &lt;ProtectedRoute isAllowed={["Administrador"]}>
+            &lt;Dashboard_profit />
+          &lt;/ProtectedRoute>
+        } />
+
+        &lt;Route path="/dashboard-prices" element={
+          &lt;ProtectedRoute isAllowed={["Administrador"]}>
+            &lt;Dashboard_prices />
+          &lt;/ProtectedRoute>
+        } />
+
+        &lt;Route path="/admin/dashboard-users" element={
+          &lt;ProtectedRoute isAllowed={["Administrador"]}>
+            &lt;Dashboard_user />
+          &lt;/ProtectedRoute>} />
+
+        &lt;Route path="/admin/dashboard-requests" element={
+          &lt;ProtectedRoute isAllowed={["Administrador","Revisor"]}>
+            &lt;Dashboard_requests />
+            &lt;Toaster position="top-right" toastOptions={{className: styles.customToast, duration: 3000,}}/>
+          &lt;/ProtectedRoute>
+        } />
+        
+        &lt;Route path="/admin/dashboard-roles" element={
+          &lt;ProtectedRoute isAllowed={["Administrador"]}>
+            &lt;Dashboard_admin />
+            &lt;Toaster position="top-right" toastOptions={{className: styles.customToast, duration: 3000,}}/>
+          &lt;/ProtectedRoute>
+        } />
+
+        &lt;Route path="/product-details/:id" element={
+          &lt;ProtectedRoute isAllowed={["Cliente"]}>
+            &lt;PurchaseDetails />
+          &lt;/ProtectedRoute>
+        } />
+
+        &lt;Route path="/paymentaccept" element={&lt;RetornoPage />} />
+        
+        &lt;Route path="/mainClient" element={&lt;MainClient />} />
+
+        &lt;Route path="/about-us" element={ &lt;UsInfo />} />
+
+        &lt;Route path="/bags" element={
+          &lt;ProtectedRoute isAllowed={["Cliente"]} onlyPaidClients={true}>
+            &lt;Bags />
+          &lt;/ProtectedRoute>
+        } />
+
+        &lt;Route path="/docs" element={&lt;Docs />} />
+
+        &lt;Route path="/students" element={&lt;Student/>} />
+
+        &lt;Route path="/external" element={&lt;External />} />
+
+        &lt;Route path="/patagon/solicitud" element={ 
+          &lt;>
+          &lt;UseRequest />
+          &lt;Toaster position="top-right" toastOptions={{className: styles.customToast, duration: 3000,}}/>
+          &lt;/>
+        } />
+
+        &lt;Route path="/account/profile" element={
+          &lt;ProtectedRoute isAllowed={["Cliente"]}>
+            &lt;Profile />
+          &lt;/ProtectedRoute>
+        } />
+        
+        &lt;Route path="/account/purchase-history" element={
+          &lt;ProtectedRoute isAllowed={["Cliente"]}>
+            &lt;PurchaseHistory />
+          &lt;/ProtectedRoute>
+        } />
+
+        &lt;Route path="/privacy" element={&lt;Privacy />} />
+
+        &lt;Route path="/terms" element={ &lt;Terms />} />
+        &lt;Route path="/404" element={&lt;NotFound />} />
+        &lt;Route path="*" element={&lt;NotFound />} /> {/* Cualquier otra ruta redirige a 404 */}
+      &lt;/Routes>
+    &lt;/Router>
+  );
+}
+
+export default App;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#AcceptRequestModal">AcceptRequestModal</a></li><li><a href="global.html#App">App</a></li><li><a href="global.html#BarGraphic">BarGraphic</a></li><li><a href="global.html#Boleta">Boleta</a></li><li><a href="global.html#Card">Card</a></li><li><a href="global.html#CartolaPDF">CartolaPDF</a></li><li><a href="global.html#Dashboard">Dashboard</a></li><li><a href="global.html#Dashboard_prices">Dashboard_prices</a></li><li><a href="global.html#Dashboard_profit">Dashboard_profit</a></li><li><a href="global.html#Dashboard_user">Dashboard_user</a></li><li><a href="global.html#DocsUser">DocsUser</a></li><li><a href="global.html#DuplicateUserModal">DuplicateUserModal</a></li><li><a href="global.html#Footer">Footer</a></li><li><a href="global.html#InputPassword">InputPassword</a></li><li><a href="global.html#InputText">InputText</a></li><li><a href="global.html#ItemUser">ItemUser</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#LoginButton">LoginButton</a></li><li><a href="global.html#MenuDashboard">MenuDashboard</a></li><li><a href="global.html#ModalUser">ModalUser</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#Nosotros">Nosotros</a></li><li><a href="global.html#NotFound">NotFound</a></li><li><a href="global.html#Notifications">Notifications</a></li><li><a href="global.html#ParticlesComponent">ParticlesComponent</a></li><li><a href="global.html#PassChange">PassChange</a></li><li><a href="global.html#Recovery">Recovery</a></li><li><a href="global.html#Registro">Registro</a></li><li><a href="global.html#RejectRequestModal">RejectRequestModal</a></li><li><a href="global.html#RetornoPage">RetornoPage</a></li><li><a href="global.html#Solicitudes">Solicitudes</a></li><li><a href="global.html#SolicitudesList">SolicitudesList</a></li><li><a href="global.html#TableComponent">TableComponent</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue Jun 10 2025 21:08:16 GMT-0400 (Chile Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

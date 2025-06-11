@@ -5,6 +5,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
 
+/**
+ * Componente de barra de navegación para el cliente.
+ *
+ * Muestra enlaces de navegación condicionalmente según el tipo de usuario autenticado,
+ * permitiendo alternar el menú en dispositivos móviles y gestionar la sesión del usuario.
+ *
+ * @component
+ *
+ * @example
+ * <NavBar />
+ *
+ * @returns {JSX.Element} Elemento JSX que representa la barra de navegación.
+ */
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 

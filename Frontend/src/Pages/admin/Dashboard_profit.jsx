@@ -10,6 +10,29 @@ import logo from '../../assets/SoloLogo_Patagon.png';
 import * as XLSX from 'xlsx';
 
 
+/**
+ * Componente Dashboard_profit
+ * 
+ * Página de administración que muestra estadísticas y gráficos relacionados con las ganancias,
+ * ingresos y productos vendidos en la plataforma. Permite exportar los datos de transacciones
+ * a Excel y visualizar información relevante sobre métodos de pago y ventas recientes.
+ * 
+ * Características principales:
+ * - Visualización de ganancias totales en dólares.
+ * - Exportación de detalles de transacciones a un archivo Excel.
+ * - Muestra de ingresos diarios, mensuales y anuales (actualmente en $0).
+ * - Listado de los productos más vendidos.
+ * - Gráficos de barras y líneas para métodos de pago e ingresos en los últimos 3 meses y 7 días.
+ * - Expansión de gráficos para una mejor visualización.
+ * 
+ * Hooks utilizados:
+ * - useState: Manejo de estados locales para expansión de gráficos y datos de ingresos.
+ * - useRef: Referencias a los contenedores de los gráficos para detectar clics fuera.
+ * - useEffect: Obtención de datos de ingresos de los últimos 3 meses y manejo de eventos de clic.
+ * 
+ * @component
+ * @returns {JSX.Element} Página de dashboard de ganancias para el administrador.
+ */
 const Dashboard_profit = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedDiv, setExpandedDiv] = useState(null);

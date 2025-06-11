@@ -4,6 +4,20 @@ import "jspdf-autotable";
 import logo from "../../../assets/patagon-logo-color.png";
 
 
+/**
+ * Componente Boleta
+ * 
+ * Genera y descarga un PDF con los detalles de una boleta de compra utilizando jsPDF y autoTable.
+ * Incluye información de la empresa, cliente, detalles de la orden y un resumen de la compra.
+ * 
+ * @component
+ * @param {Object} props - Propiedades del componente.
+ * @param {Object} props.data - Datos de la boleta, incluyendo id de orden, fecha, monto, email del usuario, método de pago, producto y tiempo.
+ * @param {Function} props.onComplete - Callback opcional que se ejecuta al completar la generación del PDF.
+ * 
+ * @example
+ * <Boleta data={data} onComplete={handleComplete} />
+ */
 const Boleta = ({ data, onComplete }) => {
   const generatePDF = () =>{
     const doc = new jsPDF();

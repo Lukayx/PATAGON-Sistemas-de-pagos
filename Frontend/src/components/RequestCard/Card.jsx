@@ -1,6 +1,24 @@
   import React, { useState } from 'react';
   import styles from './Card.module.css';
 
+  /**
+   * Componente Card que muestra la información de una solicitud y permite gestionarla.
+   *
+   * @component
+   * @param {Object} props - Propiedades del componente.
+   * @param {Object} props.solicitud - Objeto con los datos de la solicitud (nombre, email, institucion, estado, fecha, ID_request).
+   * @param {Function} props.updateSolicitudes - Función para actualizar el estado de las solicitudes en el componente padre.
+   * @param {string} props.delay - Valor para animación de aparición de la tarjeta.
+   *
+   * @returns {JSX.Element} Elemento JSX que representa una tarjeta de solicitud con acciones para aceptar, rechazar y visualizar archivos adjuntos.
+   *
+   * @example
+   * <Card
+   *   solicitud={solicitud}
+   *   updateSolicitudes={updateSolicitudes}
+   *   delay="0.2s"
+   * />
+   */
   const Card = ({ solicitud, updateSolicitudes, delay }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [inputText, setInputText] = useState('');
